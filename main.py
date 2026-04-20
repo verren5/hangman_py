@@ -1,7 +1,6 @@
-import random
-from collections import Counter
-print("Welcome to Hangman gameeeeee!!!!")
-print("Please guess the word below!! P.S it is a city! and spaces allowed")
+from hangman import choose_word, update_guessed, display_guessed, is_word_guessed
+
+
 
 cities = [
     "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio",
@@ -51,62 +50,51 @@ cities = [
     "Sapporo", "Fukuoka", "Kobe", "Kyoto", "Hiroshima", "Sendai", "Kitakyushu", "Chiba",
     "Yokohama", "Nagasaki", "Kanazawa", "Toyama", "Hakodate", "Niigata"
 ]
-#Casefold to ignore upper and lowercase!
-word = random.choice(cities).casefold()
 
-# Letter placeholder
-for _ in word:
-    print('_', end=" ")
+def main():
 
-print()
-
-guessed = ""
-chances = len(word) + 4
-flag = 0
-
-while chances > 0 and flag == 0:
-    print()
-    chances -= 1
-
-    try:
-        guess = input("Enter a letter! ").casefold()
-    except:
-        print("Enter only a letter!")
-        continue
-
-
-    if not all(guess.isalpha() or guess == " " for guess in word):
-        print("Enter only a letter!!")
-        continue
-    elif (len(guess)) >1:
-        print("Enter only A letter")
-        continue
-    elif guess in guessed:
-        print("oops! You already guessed that letter!")
+    print("Welcome to Hangman gameeeeee!!!!")
+    print("Please guess the word below!! P.S it is a city! and spaces allowed")
     
-    if guess in word:
-        #count how many the 'letter' in word appear and 
-        guessed += guess * word.count(guess)
-    else:
-        print("Wrong letter ! Try Again")
+    word = choose_word(cities).casefold()
 
-    for char in word:
-        if char in guessed:
-            print(char, end=" ")
-        else:
-            print("_", end=" ")
+    # Letter placeholder
+    for _ in word:
+        print('_', end=" ")
 
     print()
-    print("Your chance(s) left: ", chances)
 
-    if Counter(guessed) == Counter(word):
-        print('You guess the word: ', word)
-        flag = 1
-        break
+    guessed = set()
+    chances = len(word) + 4
 
-if chances <= 0 and Counter(guessed) != Counter(word):
+    while chances > 0:
+        print()
+        chances -= 1
+        
+        guess = input("Enter a letter! ").casefold()
+
+        if not guess.isalpha() or guess == " ":
+            print("Enter only a letter!!")
+            continue
+
+        elif (len(guess)) >1:
+            print("Enter only A letter")
+            continue
+        elif guess in guessed:
+            print("oops! You already guessed that letter!")
+        else:
+            guessed = update_guessed(guessed, guess)
+            print("guessed:", guessed)
+            print(display_guessed(word, guessed))
+
+            print()
+            print("Your chance(s) left: ", chances)
+
+        if is_word_guessed(word, guessed):
+            print("Congrats")
     print('Boo !! You are dead. The word is: ', word)
 
-
-    
+if __name__ == "__main__":
+    main()
+        
 
